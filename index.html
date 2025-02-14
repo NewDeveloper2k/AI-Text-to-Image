@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text to Image Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            margin: auto;
+            padding: 20px;
+            width: 50%;
+            background: linear-gradient(to right, #ffcc00, #ff6600);
+            box-shadow: 0px 0px 15px #555;
+            border-radius: 10px;
+            color: white;
+        }
+        textarea {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #ffcc00;
+            font-size: 16px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border: 3px solid #007bff;
+            display: none;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: yellow;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>AI Text to Image Generator</h2>
+        <textarea id="textInput" placeholder="Enter your text here..." rows="4"></textarea>
+        <br>
+        <button class="btn" onclick="generateAIImage()">Generate AI Image</button>
+        <br>
+        <div id="status" class="status"></div>
+        <div id="error" class="error"></div>
+        <img id="generatedImage" src="" alt="Generated AI Image">
+    </div>
+
+    <script>
+        async function generateAIImage() {
+            let text = document.getElementById("textInput").value.trim();
+            let status = document.getElementById("status");
+            let error = document.getElementById("error");
+            let imgElement = document.getElementById("generatedImage");
+            
+            if (text === "") {
+                error.innerText = "Error: Please enter text before generating the image.";
+                return;
+            } else {
+                error.innerText = "";
+            }
+            
+            status.innerText = "Generating AI image... Please wait";
+            
+            try {
+                let response = await fetch("https://your-hosted-backend.com/generate-image", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ prompt: text })
+                });
+                
+                let data = await response.json();
+                
+                if (data.imageUrl) {
+                    imgElement.src = data.imageUrl;
+                    imgElement.style.display = "block";
+                    status.innerText = "Image generated successfully!";
+                } else {
+                    error.innerText = "Error: Could not generate image. Please try again.";
+                    status.innerText = "";
+                }
+            } catch (err) {
+                error.innerText = "Error: Unable to fetch AI image. Please check your internet connection.";
+                status.innerText = "";
+            }
+        }
+    </script>
+</body>
+</html>
